@@ -1,1 +1,189 @@
+import pygame # type: ignore
+import random
+import os
 
+# Initialize Pygame
+pygame.init()
+
+# Set up the screen
+SCREEN_WIDTH, SCREEN_HEIGHT = 1000, 600
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Diamonds Game")
+
+# Colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+BACKGROUND_COLOR = (0, 128, 0)  # Green background
+
+# Font
+font = pygame.font.Font(None, 36)
+
+# Set the directory where your card images are stored
+cards_path = "C:/Users/Sai Sree/Diamonds/PNG-cards-1.3/PNG-cards-1.3"
+
+# Load card images
+card_images = {}
+for rank in ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'jack', 'queen', 'king', 'ace']:
+    for suit in ['diamonds']:
+        card_name = f"{rank}_of_{suit}.png"
+        card_images[card_name] = pygame.image.load(os.path.join(cards_path, card_name)).convert_alpha()
+
+# Card names
+card_names = list(card_images.keys())
+
+# Game variables
+player_points = 0
+computer_points = 0
+round_number = 0
+
+# Initialize player and computer card lists
+player_cards = random.sample(card_names, 13)
+computer_cards = random.sample(card_names, 13)
+
+# Initialize bidding card deck
+bidding_card_deck = card_names.copy()
+
+# Initialize bidding card for the first round
+bidding_card = random.choice(bidding_card_deck)
+bidding_card_deck.remove(bidding_card)
+
+def display_game_board(bidding_card):
+    screen.fill(BACKGROUND_COLOR)
+
+    # Display player name and points
+    player_text = font.render(f"Player Points: {player_points}", True, BLACK)
+    screen.blit(player_text, (20, 20))
+
+    # Display computer name and points
+    computer_text = font.render(f"Computer Points: {computer_points}", True, BLACK)
+    screen.blit(computer_text, (SCREEN_WIDTH - computer_text.get_width() - 20, 20))
+
+    # Display round number
+    round_text = font.render(f"Round: {round_number}/13", True, BLACK)
+    screen.blit(round_text, ((SCREEN_WIDTH - round_text.get_width()) // 2, 20))
+
+    # Display bidding card
+    if bidding_card:
+        bidding_text = font.render("Bidding Card:", True, BLACK)
+        screen.blit(bidding_text, ((SCREEN_WIDTH - bidding_text.get_width()) // 2, SCREEN_HEIGHT // 2 - 50))
+        bidding_card_image = pygame.transform.scale(card_images[bidding_card], (50, int(50 * 1.56)))
+        screen.blit(bidding_card_image, ((SCREEN_WIDTH - bidding_card_image.get_width()) // 2, SCREEN_HEIGHT // 2))
+
+    # Display player cards heading
+    player_heading_text = font.render("Player Cards", True, BLACK)
+    screen.blit(player_heading_text, (20, 350))
+
+    # Display computer cards heading
+    computer_heading_text = font.render("Computer Cards", True, BLACK)
+    screen.blit(computer_heading_text, (20, 50))
+
+    # Display player cards
+    if player_cards:
+        num_player_cards = len(player_cards)
+        card_width = min(50, (SCREEN_WIDTH - 40) // num_player_cards)
+        button_x = (SCREEN_WIDTH - num_player_cards * card_width) // 2
+        button_y = 400
+        for card_name in player_cards:
+            card_image = pygame.transform.scale(card_images[card_name], (card_width, int(card_width * 1.56)))
+            screen.blit(card_image, (button_x, button_y))
+            button_x += card_width
+
+    # Display computer cards
+    if computer_cards:
+        num_computer_cards = len(computer_cards)
+        card_width = min(50, (SCREEN_WIDTH - 40) // num_computer_cards)
+        button_x = (SCREEN_WIDTH - num_computer_cards * card_width) // 2
+        button_y = 100
+        for card_name in computer_cards:
+            card_image = pygame.transform.scale(card_images[card_name], (card_width, int(card_width * 1.56)))
+            screen.blit(card_image, (button_x, button_y))
+            button_x += card_width
+
+    pygame.display.flip()  # Update the display
+
+def play_round(player_bid_index):
+    global player_points, computer_points, round_number, player_cards, computer_cards, bidding_card_deck, bidding_card
+
+    # Increase round number
+    round_number += 1
+
+    # Player bids
+    player_bid_card = player_cards.pop(player_bid_index)
+
+    # Computer bids
+    computer_bid_card = random.choice(computer_cards)
+    computer_cards.remove(computer_bid_card)
+
+    # Determine the winning bid
+    player_bid_index = card_names.index(player_bid_card)
+    computer_bid_index = card_names.index(computer_bid_card)
+    if player_bid_index > computer_bid_index:
+        winning_bid = "Player"
+        player_points += card_names.index(bidding_card) + 2
+    elif player_bid_index < computer_bid_index:
+        winning_bid = "Computer"
+        computer_points += card_names.index(bidding_card) + 2
+    else:
+        # Both bids are equal
+        winning_bid = "Tie"
+        points_to_add = (card_names.index(bidding_card) + 2) // 2
+        player_points += points_to_add
+        computer_points += points_to_add
+
+    # Select a card to be bid for the next round
+    if round_number < 13:
+        bidding_card = random.choice(bidding_card_deck)
+        bidding_card_deck.remove(bidding_card)
+
+    return winning_bid
+
+# Game loop
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:  # Left mouse button
+                mouse_x, mouse_y = event.pos
+                # Check if the mouse click is on any of the player's cards
+                if player_cards:
+                    num_player_cards = len(player_cards)
+                    card_width = min(50, (SCREEN_WIDTH - 40) // num_player_cards)
+                    button_x = (SCREEN_WIDTH - num_player_cards * card_width) // 2
+                    button_y = 400
+                    for i, card_name in enumerate(player_cards):
+                        card_rect = pygame.Rect(button_x, button_y, card_width, int(card_width * 1.56))
+                        if card_rect.collidepoint(mouse_x, mouse_y):
+                            winning_bid = play_round(i)
+                            print(f"Winner: {winning_bid}")
+                            print(f"Player Points: {player_points}")
+                            print(f"Computer Points: {computer_points}")
+                            print()
+                            break
+                        button_x += card_width
+
+    # Update the display
+    display_game_board(bidding_card)
+
+    # Check for game end
+    if round_number >= 13:
+        running = False
+
+# Print the winner
+winner_text = None
+if player_points > computer_points:
+    winner_text = font.render("Player wins!", True, BLACK)
+elif computer_points > player_points:
+    winner_text = font.render("Computer wins!", True, BLACK)
+else:
+    winner_text = font.render("It's a tie!", True, BLACK)
+
+screen.blit(winner_text, (SCREEN_WIDTH // 2 - winner_text.get_width() // 2, SCREEN_HEIGHT // 2 - winner_text.get_height() // 2))
+pygame.display.flip()
+
+# Pause for a moment before quitting
+pygame.time.delay(3000)
+
+# Quit Pygame
+pygame.quit()
