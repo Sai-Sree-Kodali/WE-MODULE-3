@@ -12,3 +12,6 @@ To keep track of the Generative AI classes taken as part of Module 3 in the Wome
 -->Developed strategies for the bidding card game 'Diamonds' with GenAI
 
 -->Developed a code for Diamonds game using GenAI
+
+-->Design a simplified Pokemon database with
+tables for Pokemon, Types, and Moves, handling the many-to-many relationship between Pokemon and Moves using a junction table.
