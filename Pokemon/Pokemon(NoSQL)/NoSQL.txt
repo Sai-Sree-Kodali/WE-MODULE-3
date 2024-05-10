@@ -1,0 +1,36 @@
+db.Pokemon.insertMany([
+  { "name": "Bulbasaur", "types": ["Grass"], "moves": ["Tackle", "Vine Whip", "Return"] },
+  { "name": "Charmander", "types": ["Fire"], "moves": ["Tackle", "Ember", "Return"] },
+  { "name": "Squirtle", "types": ["Water"], "moves": ["Tackle", "Water Gun", "Return"] },
+  { "name": "Eevee", "types": ["Normal"], "moves": ["Tackle", "Headbutt", "Return"] },
+  { "name": "Pidgey", "types": ["Normal", "Flying"], "moves": ["Tackle", "Wing Attack", "Return"] }
+])
+
+db.Type.insertMany([
+  { "name": "Grass" },
+  { "name": "Fire" },
+  { "name": "Water" },
+  { "name": "Normal" },
+  { "name": "Flying" }
+])
+
+db.Move.insertMany([
+  { "name": "Tackle", "power": 35, "type": "Normal" },
+  { "name": "Water Gun", "power": 40, "type": "Water" },
+  { "name": "Ember", "power": 40, "type": "Fire" },
+  { "name": "Vine Whip", "power": 40, "type": "Grass" },
+  { "name": "Wing Attack", "power": 65, "type": "Flying" },
+  { "name": "Headbutt", "power": 70, "type": "Normal" },
+  { "name": "Return", "power": 100, "type": "Normal" }
+])
+
+db.Pokemon_Move.insertMany([
+  { "pokemon": "Bulbasaur", "moves": ["Tackle", "Vine Whip", "Return"] },
+  { "pokemon": "Charmander", "moves": ["Tackle", "Ember", "Return"] },
+  { "pokemon": "Squirtle", "moves": ["Tackle", "Water Gun", "Return"] },
+  { "pokemon": "Eevee", "moves": ["Tackle", "Headbutt", "Return"] },
+  { "pokemon": "Pidgey", "moves": ["Tackle", "Wing Attack", "Return"] }
+])
+ 
+Query-1: { "moves": "Return" }
+Query-2: { "type": { "$in": ["Fire", "Flying"] } }

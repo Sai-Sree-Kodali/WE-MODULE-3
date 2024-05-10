@@ -1,0 +1,6 @@
+_id,name,types[0],types[1],moves[0],moves[1],moves[2]
+663cc0635bbc3c7b003c8348,Bulbasaur,Grass,,Tackle,Vine Whip,Return
+663cc0795bbc3c7b003c8349,Charmander,Fire,,Tackle,Ember,Return
+663cc0875bbc3c7b003c834a,Squirtle,Water,,Tackle,Water Gun,Return
+663cc0945bbc3c7b003c834b,Eevee,Normal,,Tackle,Headbutt,Return
+663cc0a75bbc3c7b003c834c,Pidgey,Normal,Flying,Tackle,Wing Attack,Return
